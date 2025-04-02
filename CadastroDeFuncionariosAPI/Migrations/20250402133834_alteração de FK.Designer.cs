@@ -4,6 +4,7 @@ using CadastroDeFuncionariosAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CadastroDeFuncionariosAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250402133834_alteração de FK")]
+    partial class alteraçãodeFK
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,15 +27,8 @@ namespace CadastroDeFuncionariosAPI.Migrations
 
             modelBuilder.Entity("CadastroDeFuncionariosAPI.Models.Entities.Filho", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("CPF")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateOnly>("DataDeNascimento")
                         .HasColumnType("date");
@@ -41,32 +37,23 @@ namespace CadastroDeFuncionariosAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ResponsavelId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ResponsavelId");
+                    b.HasKey("CPF");
 
                     b.ToTable("Filhos");
                 });
 
             modelBuilder.Entity("CadastroDeFuncionariosAPI.Models.Entities.Funcionario", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("CPF")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateOnly>("DataDeNascimento")
                         .HasColumnType("date");
 
                     b.Property<int>("Departamento")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Filhos")
                         .HasColumnType("int");
 
                     b.Property<string>("Nome")
@@ -76,25 +63,20 @@ namespace CadastroDeFuncionariosAPI.Migrations
                     b.Property<double>("Salario")
                         .HasColumnType("float");
 
-                    b.HasKey("Id");
+                    b.HasKey("CPF");
 
                     b.ToTable("Funcionarios");
                 });
 
             modelBuilder.Entity("CadastroDeFuncionariosAPI.Models.Entities.Filho", b =>
                 {
-                    b.HasOne("CadastroDeFuncionariosAPI.Models.Entities.Funcionario", "Responsavel")
-                        .WithMany("Filhos")
-                        .HasForeignKey("ResponsavelId")
+                    b.HasOne("CadastroDeFuncionariosAPI.Models.Entities.Funcionario", "FuncionarioResponsavel")
+                        .WithMany()
+                        .HasForeignKey("CPF")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Responsavel");
-                });
-
-            modelBuilder.Entity("CadastroDeFuncionariosAPI.Models.Entities.Funcionario", b =>
-                {
-                    b.Navigation("Filhos");
+                    b.Navigation("FuncionarioResponsavel");
                 });
 #pragma warning restore 612, 618
         }

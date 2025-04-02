@@ -1,4 +1,6 @@
 using CadastroDeFuncionariosAPI.Data;
+using CadastroDeFuncionariosAPI.Services.Filho;
+using CadastroDeFuncionariosAPI.Services.Funcionario;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -11,8 +13,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IFuncionarioInterface, FuncionarioService>();
+builder.Services.AddScoped<IFilhoInterface, FilhoService>();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options 
+    => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")
+    ));
 
 var app = builder.Build();
 

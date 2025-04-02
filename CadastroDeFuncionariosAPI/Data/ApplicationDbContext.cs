@@ -1,4 +1,4 @@
-﻿using CadastroDeFuncionariosAPI.Models.Entities;
+﻿using CadastroDeFuncionariosAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CadastroDeFuncionariosAPI.Data
@@ -9,6 +9,7 @@ namespace CadastroDeFuncionariosAPI.Data
         {
 
         }
-        public DbSet<Funcionario> Funcionarios { get; set; }
+        public DbSet<FuncionarioModel> Funcionarios { get; set; }
+        public DbSet<FilhoModel> Filhos { get; set; }
     }
 }

@@ -1,10 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace CadastroDeFuncionariosAPI.Models
+﻿namespace CadastroDeFuncionariosAPI.Dto.Vinculo
 {
-    public class UpdateFuncionarioDto
+    public class FuncionarioVinculoDto
     {
-        [Key]
+        public int Id { get; set; }
         public required string CPF { get; set; }
         public required string Nome { get; set; }
         public int Departamento { get; set; }

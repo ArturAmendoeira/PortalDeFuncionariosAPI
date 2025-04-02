@@ -1,6 +1,7 @@
 ﻿using CadastroDeFuncionariosAPI.Data;
+using CadastroDeFuncionariosAPI.Dto.Funcionario;
 using CadastroDeFuncionariosAPI.Models;
-using CadastroDeFuncionariosAPI.Models.Entities;
+using CadastroDeFuncionariosAPI.Services.Funcionario;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,87 +11,47 @@ namespace CadastroDeFuncionariosAPI.Controllers
     [ApiController]
     public class FuncionariosController : ControllerBase
     {
-        private readonly ApplicationDbContext dbContext;
-
-        public FuncionariosController(ApplicationDbContext dbContext)
+        private readonly IFuncionarioInterface _funcionarioInterface;
+        public FuncionariosController(IFuncionarioInterface funcionarioInterface)
         {
-            this.dbContext = dbContext;
+            _funcionarioInterface = funcionarioInterface;
         }
 
-        [HttpGet]
-        public IActionResult GetTodosOsFuncionarios()
+
+        [HttpGet("ListarFuncionarios")]
+        public async Task<ActionResult<ResponseModel<List<FuncionarioModel>>>> ListarFuncionarios()
         {
-            var todosOsFuncionarios = dbContext.Funcionarios.ToList();
-            return Ok(todosOsFuncionarios);
+            var funcionarios = await _funcionarioInterface.ListarFuncionarios();
+            return Ok(funcionarios);
         }
-        [HttpGet]
-        [Route("{nome}")]
-        public IActionResult GetFuncionarioByNome(string nome)
+
+        [HttpGet("BuscarFuncionarios/{nome}&{departamento}")]
+
+        public async Task<ActionResult<ResponseModel<FuncionarioModel>>> BuscarFuncionarios(string nome, int departamento)
         {
-            var funcionario = dbContext.Funcionarios.FirstOrDefault(f => f.Nome== nome);
-            if (funcionario is null)
-            {
-                return NotFound();
-            }
+            var funcionario = await _funcionarioInterface.BuscarFuncionario(nome, departamento);
             return Ok(funcionario);
         }
-        [HttpGet]
-        [Route("{departamento:int}")]
-        public IActionResult GetFuncionarioByDepartamento(int departamento)
+
+        [HttpPost("CriarFuncionario")]
+        public async Task<ActionResult<ResponseModel<List<FuncionarioModel>>>> CriarFuncionario(FuncionarioCriacaoDto funcionarioCriacaoDto)
         {
-            var funcionario = dbContext.Funcionarios.Where(f=> f.Departamento == departamento).ToList();
-            if (!funcionario.Any())
-            {
-                return NotFound();
-            }
+            var funcionario = await _funcionarioInterface.CriarFuncionario(funcionarioCriacaoDto);
             return Ok(funcionario);
         }
-        [HttpPost]
-        public IActionResult AddFuncionario(AddFuncionarioDto addFuncionarioDto)
-        {
-            var funcionarioEntidade = new Funcionario()
-            {
-                CPF = addFuncionarioDto.CPF,
-                Nome = addFuncionarioDto.Nome,
-                Departamento = addFuncionarioDto.Departamento,
-                Salario = addFuncionarioDto.Salario,
-                DataDeNascimento = addFuncionarioDto.DataDeNascimento
-            };
-            dbContext.Funcionarios.Add(funcionarioEntidade);
-            dbContext.SaveChanges();
 
-            return Ok(funcionarioEntidade); 
-        }
-        [HttpPut]
-        [Route("{cpf}")]
-        public IActionResult UpadateFuncionario(string cpf, UpdateFuncionarioDto updateFuncionarioDto)
+        [HttpPut("EditarFuncionario")]
+        public async Task<ActionResult<ResponseModel<List<FuncionarioModel>>>> EditarFuncionario(FuncionarioEdicaoDto funcionarioEdicaoDto)
         {
-            var funcionario = dbContext.Funcionarios.Find(cpf);
-            if(funcionario is null)
-            {
-                return NotFound();
-            }
-            
-            funcionario.Nome = updateFuncionarioDto.Nome;
-            funcionario.Departamento = updateFuncionarioDto.Departamento;
-            funcionario.Salario = updateFuncionarioDto.Salario;
-            funcionario.DataDeNascimento = updateFuncionarioDto.DataDeNascimento;
-
-            dbContext.SaveChanges();
+            var funcionario = await _funcionarioInterface.EditarFuncionario(funcionarioEdicaoDto);
             return Ok(funcionario);
-
         }
-        [HttpDelete]
-        public IActionResult DeleteFuncionario(string cpf)
+
+        [HttpDelete("ExcluirFuncionario")]
+        public async Task<ActionResult<ResponseModel<List<FuncionarioModel>>>> ExcluirFuncionario(int idFuncionario)
         {
-            var funcionario = dbContext.Funcionarios.Find(cpf);
-            if(funcionario is null)
-            {
-                return NotFound();
-            }
-            dbContext.Funcionarios.Remove(funcionario);
-            dbContext.SaveChanges();
-            return Ok();
+            var funcionario = await _funcionarioInterface.ExcluirFuncionario(idFuncionario);
+            return Ok(funcionario);
         }
     }
 }

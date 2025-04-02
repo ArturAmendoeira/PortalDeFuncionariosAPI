@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace CadastroDeFuncionariosAPI.Models
+﻿namespace CadastroDeFuncionariosAPI.Dto.Funcionario
 {
-    public class AddFuncionarioDto
+    public class FuncionarioCriacaoDto
     {
-        [Key]
         public required string CPF { get; set; }
         public required string Nome { get; set; }
         public int Departamento { get; set; }

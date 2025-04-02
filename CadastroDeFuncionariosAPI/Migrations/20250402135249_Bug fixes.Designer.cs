@@ -4,6 +4,7 @@ using CadastroDeFuncionariosAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CadastroDeFuncionariosAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250402135249_Bug fixes")]
+    partial class Bugfixes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,44 +27,31 @@ namespace CadastroDeFuncionariosAPI.Migrations
 
             modelBuilder.Entity("CadastroDeFuncionariosAPI.Models.Entities.Filho", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("CPF")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateOnly>("DataDeNascimento")
                         .HasColumnType("date");
+
+                    b.Property<string>("FuncionarioResponsavelCPF")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ResponsavelId")
-                        .HasColumnType("int");
+                    b.HasKey("CPF");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("ResponsavelId");
+                    b.HasIndex("FuncionarioResponsavelCPF");
 
                     b.ToTable("Filhos");
                 });
 
             modelBuilder.Entity("CadastroDeFuncionariosAPI.Models.Entities.Funcionario", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("CPF")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateOnly>("DataDeNascimento")
                         .HasColumnType("date");
@@ -76,20 +66,20 @@ namespace CadastroDeFuncionariosAPI.Migrations
                     b.Property<double>("Salario")
                         .HasColumnType("float");
 
-                    b.HasKey("Id");
+                    b.HasKey("CPF");
 
                     b.ToTable("Funcionarios");
                 });
 
             modelBuilder.Entity("CadastroDeFuncionariosAPI.Models.Entities.Filho", b =>
                 {
-                    b.HasOne("CadastroDeFuncionariosAPI.Models.Entities.Funcionario", "Responsavel")
+                    b.HasOne("CadastroDeFuncionariosAPI.Models.Entities.Funcionario", "FuncionarioResponsavel")
                         .WithMany("Filhos")
-                        .HasForeignKey("ResponsavelId")
+                        .HasForeignKey("FuncionarioResponsavelCPF")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Responsavel");
+                    b.Navigation("FuncionarioResponsavel");
                 });
 
             modelBuilder.Entity("CadastroDeFuncionariosAPI.Models.Entities.Funcionario", b =>
